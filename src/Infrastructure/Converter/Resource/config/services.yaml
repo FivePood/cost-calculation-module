@@ -1,0 +1,8 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  CostCalculationModule\Infrastructure\Converter\Api\ConverterInterface:
+    class: CostCalculationModule\Infrastructure\Converter\Service\AbstractConverter

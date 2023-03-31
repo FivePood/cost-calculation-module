@@ -1,0 +1,13 @@
+parameters:
+  app.name: cost-calculation-module
+  app.version: '1.0.0'
+
+imports:
+  - {resource: ../src/Application/*/Resource/config/services.yaml}
+  - {resource: ../src/Infrastructure/*/Resource/config/services.yaml}
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
