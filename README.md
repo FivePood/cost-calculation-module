@@ -2,6 +2,7 @@
 ### Установка composer:
 ```sh
 composer install
+composer dump-autoload
 ```
 ### Генерация автозагрузчика:
 ```sh
@@ -10,55 +11,57 @@ composer dump-autoload
 ### Настройка калькулятора
 #### Вариант добавления и удаления сервиса
 ```php
-$calculator = new Calculator();
-
-$defaultDelivery = new DefaultDeliveryService();
-$calculator->addDeliveryService($defaultDelivery);
-
-$calculator->removeDeliveryService($defaultDelivery);
-
-$calculator->addDeliveryService(new FastDeliveryService(['base_url' => 'https://fast.delivery']));
+    $calculator = new CalculatorDelivery();
+    $defaultDelivery = new DefaultDeliveryService();
+    $calculator->addDeliveryService($defaultDelivery);
+    $calculator->removeDeliveryService($defaultDelivery);
 ```
 #### Вариант добавления нескольких сервисов
 ```php
-$fastDelivery = new FastDeliveryService(['base_url' => 'https://fast.delivery']);
-$slowDelivery = new SlowDeliveryService(['base_url' => 'https://slow.delivery']);
-$calculator = new Calculator([$fastDelivery, $slowDelivery]);
+    $fastDelivery = new FastDeliveryService();
+    $slowDelivery = new SlowDeliveryService();
+    $calculator = new CalculatorDelivery([$fastDelivery, $slowDelivery]);
 ```
 ### Получение результата
 #### Пример запроса
 ```php
-$request = new Request('адрес отправителя', 'адрес получателя', 5.0);
+    $shipping = new Shipping('адрес отправителя', 'адрес получателя', 5.0);
 ```
-#### Варианты расчёта
-
+#### Варианты расчёта по одному сервису
 ```php
-$result = $calculator->calculateForAllDeliveryServices($request);
-
-$result = $calculator->calculateForDeliveryService($request, $fastDelivery);
+    $result = $calculator->calculateForDeliveryService($request, $fastDelivery);
 ```
 #### Результат
 ```php
-[orders:protected] => Array
-    [CostCalculationModule\Infrastructure\Delivery\Service\FastDeliveryService] => 
-        CostCalculationModule\Infrastructure\Order\Service\Order Object
-        (
-            [price:CostCalculationModule\Infrastructure\Order\Service\Order:private] => 850
-            [date:CostCalculationModule\Infrastructure\Order\Service\Order:private] => 2023-04-11
-            [error:CostCalculationModule\Infrastructure\Order\Service\Order:private] => error
-        )
-    [CostCalculationModule\Infrastructure\Delivery\Service\SlowDeliveryService] => 
-        CostCalculationModule\Infrastructure\Order\Service\Order Object
-        (
-            [price:CostCalculationModule\Infrastructure\Order\Service\Order:private] => 450
-            [date:CostCalculationModule\Infrastructure\Order\Service\Order:private] => 2017-10-20
-            [error:CostCalculationModule\Infrastructure\Order\Service\Order:private] => error
-        )
-    [CostCalculationModule\Infrastructure\Delivery\Service\DefaultDeliveryService] => 
-        CostCalculationModule\Infrastructure\Order\Service\Order Object
-        (
-            [price:CostCalculationModule\Infrastructure\Order\Service\Order:private] => 850
-            [date:CostCalculationModule\Infrastructure\Order\Service\Order:private] => 2017-10-20
-            [error:CostCalculationModule\Infrastructure\Order\Service\Order:private] => error
-        )
+    Array
+    (
+        [FastDeliveryService] => Array
+            (
+                [price] => 4100
+                [date] => 2024-02-03
+                [error] =>
+            )
+    )
+```
+#### Варианты расчёта по всем сервисам
+```php
+    $result = $calculator->calculateForAllDeliveryServices($request);
+```
+#### Результат
+```php
+    Array
+    (
+        [FastDeliveryService] => Array
+            (
+                [price] => 0
+                [date] => 2024-01-27
+                [error] => Не удалось найти перевозчика
+            )
+        [SlowDeliveryService] => Array
+            (
+                [price] => 2355
+                [date] => 2022-06-11
+                [error] =>
+            )
+    )
 ```

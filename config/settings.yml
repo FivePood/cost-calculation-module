@@ -1,0 +1,10 @@
+default:
+  base_url: 'http://irina.rehkzy1v.beget.tech/tk/api/get_price_fast.php'
+
+fast:
+  base_url: 'http://irina.rehkzy1v.beget.tech/tk/api/get_price_fast.php'
+  end_time: '18:00'
+
+slow:
+  base_url: 'http://irina.rehkzy1v.beget.tech/tk/api/get_price_slow.php?api_key=we23gjv47dnsdf6ewr'
+  price: 150
